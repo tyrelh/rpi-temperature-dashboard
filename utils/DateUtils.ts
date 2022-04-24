@@ -19,6 +19,14 @@ export function subtractDaysFromDate(date: Date, days: number): Date {
   if (days == 0) {
     return date;
   }
-  date.setDate(date.getDate() - 1)
+  date.setDate(date.getDate() - 1);
   return subtractDaysFromDate(date, --days);
+}
+
+export function subtractMinutesFromDate(date: Date, minutes: number): Date {
+  if (minutes == 0) {
+    return date;
+  }
+  date.setMinutes(date.getMinutes() -1);
+  return subtractMinutesFromDate(date, --minutes);
 }
