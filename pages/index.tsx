@@ -5,9 +5,9 @@ import {LineChart, Line, XAxis, YAxis} from "recharts";
 import { URLSearchParams } from 'url';
 import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
-import { getISODateStringFromDate } from '../utils/DateUtils';
+import { getISODateStringFromDate, subtractDaysFromDate } from '../utils/DateUtils';
+import { TEMPERATURE_API_URL } from '../config';
 
-const API_URL = "https://9g41d991c8.execute-api.ca-central-1.amazonaws.com/prod"
 const TEMPERATURE_ENDPOINT = "/temperature"
 const TEMPERATURES_ENDPOINT = "/temperatures"
 
@@ -25,11 +25,10 @@ const Home: NextPage = (props) => {
         location: 'office',
         date: getISODateStringFromDate(now)
       };
-    
       console.log("Request params: ", params);
       const esc = encodeURIComponent;
       const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-      const url = API_URL + TEMPERATURE_ENDPOINT + "?" + query;
+      const url = TEMPERATURE_API_URL + TEMPERATURE_ENDPOINT + "?" + query;
       // console.log(url)
       const response = await fetch(url)
       // console.log("Raw response: ", response);
@@ -62,7 +61,7 @@ const Home: NextPage = (props) => {
     
   }, []);
 
-  console.log("state: ", temperatureData)
+  // console.log("state: ", temperatureData)
 
   return (
     <>
