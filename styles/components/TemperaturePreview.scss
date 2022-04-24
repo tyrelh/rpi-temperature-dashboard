@@ -1,0 +1,65 @@
+.temperaturePreviewContainer {
+  padding: 24px;
+  width: 42%;
+
+  .temperaturePreviewLocation {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $color-accent-1;
+    margin: 0;
+  }
+
+  .temperaturePreviewValue {
+    font-family: $font-alliance-extrabold;
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0 0 0.2rem 0;
+  }
+
+  .temperaturePreviewDate {
+    font-size: 0.9rem;
+    color: $color-faded-text;
+    margin: 0;
+  }
+}
+
+.fix0 {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.fix1 {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  -webkit-perspective: 1000;
+}
+.fix2 {
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  -moz-transform: translate3d(-50%, -50%, 0);
+  -ms-transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0);
+}
+.fix3 {
+  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}

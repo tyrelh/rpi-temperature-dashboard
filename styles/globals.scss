@@ -1,0 +1,12 @@
+// GLOBALS
+@import "./colors.scss";
+@import "./fonts.scss";
+@import "./text.scss";
+
+// COMPONENTS
+@import "./components/TemperaturePreview.scss";
+
+body {
+  color: $color-main-text;
+  background: $color-background;
+}
