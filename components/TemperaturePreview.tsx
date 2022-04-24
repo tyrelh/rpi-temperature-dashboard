@@ -9,7 +9,7 @@ export interface Props {
 
 export default function TemperaturePreview(props: Props) {
   const latest = props.latestTemperature;
-  console.log("latest: ", latest)
+  // console.log("latest: ", latest)
   const historical = props?.historicalTemperatures;
   const now = new Date();
 

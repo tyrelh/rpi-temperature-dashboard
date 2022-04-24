@@ -6,7 +6,7 @@ import { URLSearchParams } from 'url';
 import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
 import { getISODateStringFromDate, subtractDaysFromDate } from '../utils/DateUtils';
-import { TEMPERATURE_API_URL } from '../config';
+import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
 
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
@@ -18,47 +18,67 @@ function generateDummyData() {
 
 const Home: NextPage = (props) => {
   const [temperatureData, setTemperatureData] = useState<Temperature[]>([]);
+  const [dataFetched, setDataFetched] = useState<boolean>(false);
 
   useEffect(() => {
     async function getData() {
-      const now = new Date();
-      var params = {
-        location: 'office',
-        date: getISODateStringFromDate(now)
-      };
-      console.log("Request params: ", params);
-      const esc = encodeURIComponent;
-      const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-      const url = TEMPERATURE_API_URL + TEMPERATURE_ENDPOINT + "?" + query;
-      // console.log(url)
-      const response = await fetch(url)
-      // console.log("Raw response: ", response);
-      const body = await response.json();
-      if (!body) {
-        console.log("No results returned from api")
-        return ([])
+      let locations: string[] = []
+      try {
+        const locationsResponse = await fetch(API_BASE_URL + LOCATIONS_ENDPOINT);
+        const locationsResponseBody = await locationsResponse.json()
+        console.log("Locations response body: ", locationsResponseBody);
+        locations = locations.concat(locationsResponseBody);
+      } catch (e) {
+        console.log("No locations were found");
       }
-      console.log(body)
-      const dummyLocations: string[] = generateDummyData();
-      const datum: Temperature[] = [...temperatureData];
-      for (let location of dummyLocations) {
-        let existing: Temperature | undefined;
-        if (existing = datum.find((t: Temperature) =>  t.location == location )) {
-          // console.log(existing)
-          existing.value = body.value;
-          existing.date = body.time;
-        } else {
-          datum.push({
+      
+      console.log(locations);
+      if (locations.length > 0) {
+        const now = new Date();
+        const data: Temperature[] = [...temperatureData];
+        
+        for (let location of locations) {
+          const params = {
             location: location,
-            value: body.value,
-            date: new Date(body.time)
-          });
+            date: getISODateStringFromDate(now)
+          };
+          console.log("Request params: ", params);
+          const esc = encodeURIComponent;
+          const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+          const url = API_BASE_URL + TEMPERATURE_ENDPOINT + "?" + query;
+          // console.log(url)
+          const response = await fetch(url)
+          // console.log("Raw response: ", response);
+          const body = await response.json();
+          if (!body) {
+            console.log("No results returned from api")
+            continue;
+          }
+          console.log(body)
+
+          let existing: Temperature | undefined;
+          if (existing = data.find((t: Temperature) =>  t.location == location )) {
+            // console.log(existing)
+            existing.value = body.value;
+            existing.date = body.time;
+          } else {
+            data.push({
+              location: location,
+              value: body.value,
+              date: new Date(body.time)
+            });
+          }
         }
+        // console.log(data)
+      
+        setDataFetched(true);
+        setTemperatureData(data);
       }
-      // console.log(datum)
-      setTemperatureData(datum);
     }
-    getData();
+
+    if (!dataFetched) {
+      getData();
+    }
     
   }, []);
 
