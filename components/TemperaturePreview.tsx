@@ -1,4 +1,5 @@
 import { Temperature } from "../DTOS/Temperature";
+import { getTimeStringFromDate } from "../utils/DateUtils";
 import { formatLocationName } from "../utils/TextUtils";
 
 export interface Props {
@@ -21,7 +22,7 @@ export default function TemperaturePreview(props: Props) {
         {latest.value}°C
       </p>
       <p className="temperaturePreviewDate">
-        {latest.date.toLocaleTimeString("us-EN").toLowerCase()}
+        {getTimeStringFromDate(latest.date)}
       </p>
       {/* <LineChart height={400} width={800} data={data}>
         <Line type="monotone" dataKey="value" stroke="#778799"/>

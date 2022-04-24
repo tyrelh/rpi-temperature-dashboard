@@ -5,6 +5,7 @@ import {LineChart, Line, XAxis, YAxis} from "recharts";
 import { URLSearchParams } from 'url';
 import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
+import { getISODateStringFromDate } from '../utils/DateUtils';
 
 const API_URL = "https://9g41d991c8.execute-api.ca-central-1.amazonaws.com/prod"
 const TEMPERATURE_ENDPOINT = "/temperature"
@@ -22,10 +23,10 @@ const Home: NextPage = (props) => {
       const now = new Date();
       var params = {
         location: 'office',
-        date: now.getTime().toString()
+        date: getISODateStringFromDate(now)
       };
     
-      // console.log("Request params: ", params);
+      console.log("Request params: ", params);
       const esc = encodeURIComponent;
       const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
       const url = API_URL + TEMPERATURE_ENDPOINT + "?" + query;
