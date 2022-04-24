@@ -8,8 +8,9 @@ import { Temperature } from '../DTOS/Temperature';
 import { getISODateStringFromDate, subtractDaysFromDate } from '../utils/DateUtils';
 import { TEMPERATURE_API_URL } from '../config';
 
-const TEMPERATURE_ENDPOINT = "/temperature"
-const TEMPERATURES_ENDPOINT = "/temperatures"
+const TEMPERATURE_ENDPOINT = "/temperature";
+const TEMPERATURES_ENDPOINT = "/temperatures";
+const LOCATIONS_ENDPOINT = "/locations";
 
 function generateDummyData() {
   return ["sun-room", "office"];
