@@ -11,6 +11,7 @@ import { Col, Row } from 'antd';
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
 const LOCATIONS_ENDPOINT = "/locations";
+const NUMBER_OF_COLUMNS = 2;
 
 function generateDummyData() {
   return ["sun-room", "office"];
@@ -90,55 +91,30 @@ const Home: NextPage = (props) => {
   }, []);
 
 
-  function listToMatrix(list: Array<any>, columns: number):Array<Array<any>> {
-    let newMatrix = new Array(Math.ceil(list.length / columns));
-    let i = 0;
-    while (i < list.length) {
-      newMatrix[i] = new Array(columns);
-      for (let j = 0; j < columns; j++) {
-        newMatrix[i][j] = list[i]
-      }
-    }
-    return newMatrix
-  }
-
-
   function mapPreviewColumns(list: Array<Temperature>): ReactElement {
-    console.log("mapping row: ", list)
     let elements: ReactElement[] = [];
     list.map((value, index) => {
       elements.push(
         <Col span={12}>
           <TemperaturePreview latestTemperature={value}/>
-          {/* {value} */}
         </Col>
-      )
-      
+      );
     })
-
     return <>{ elements }</>
   }
 
 
   function renderTemperatureGrid(data: Array<any>) {
-    const numberOfColumns = 2;
-    const numberOfLocations = temperatureData.length
-    // console.log(numberOfLocations)
-    const numberOfRows = Math.ceil(numberOfLocations / numberOfColumns);
-    // console.log(numberOfRows);
-
     let elements: ReactElement[] = []
-
     let n = 0;
     while(n < data.length) {
       elements.push(
         <Row>
-          { mapPreviewColumns(data.slice(n, n + numberOfColumns)) }
+          { mapPreviewColumns(data.slice(n, n + NUMBER_OF_COLUMNS)) }
         </Row>
       )
-      n += numberOfColumns;
+      n += NUMBER_OF_COLUMNS;
     }
-    
     return <>{ elements }</>
   }
 
