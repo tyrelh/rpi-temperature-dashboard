@@ -2,7 +2,10 @@
 export const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 export function getISODateStringFromDate(date: Date): string {
-  return date.toISOString().slice(0, 10)
+  let year = `${date.getFullYear()}`;
+  let month = `${date.getMonth() + 1}`.length === 1 ? `0${date.getMonth() + 1}` : `${date.getMonth() + 1}`;
+  let day = `${date.getDate()}`.length === 1 ? `0${date.getDate()}` : `${date.getDate()}`;
+  return `${year}-${month}-${day}`
 }
 
 export function getTimeStringFromDate(date: Date): string {

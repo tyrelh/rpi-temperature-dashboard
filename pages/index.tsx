@@ -22,9 +22,16 @@ const Home: NextPage = (props) => {
 
   useEffect(() => {
     async function getData() {
+      const now = new Date();
       let locations: string[] = []
       try {
-        const locationsResponse = await fetch(API_BASE_URL + LOCATIONS_ENDPOINT);
+        const params = {
+          date: getISODateStringFromDate(now)
+        };
+        const esc = encodeURIComponent;
+        const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
+        console.log(query)
+        const locationsResponse = await fetch(API_BASE_URL + LOCATIONS_ENDPOINT + "?" + query);
         const locationsResponseBody = await locationsResponse.json()
         console.log("Locations response body: ", locationsResponseBody);
         locations = locations.concat(locationsResponseBody);
@@ -34,7 +41,7 @@ const Home: NextPage = (props) => {
       
       console.log(locations);
       if (locations.length > 0) {
-        const now = new Date();
+        
         const data: Temperature[] = [...temperatureData];
         
         for (let location of locations) {
