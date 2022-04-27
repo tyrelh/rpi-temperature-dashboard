@@ -4,12 +4,14 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "deploy": "echo 'true' > ./out/.nojekyll && gh-pages -d out -b gh-pages -r https://github.com/tyrelh/rpi-temperature-dashboard.git -f -t"
   },
   "dependencies": {
     "antd": "^4.20.0",
+    "gh-pages": "^3.2.3",
     "less": "^4.1.2",
     "next": "12.1.5",
     "react": "^17.0.2",
