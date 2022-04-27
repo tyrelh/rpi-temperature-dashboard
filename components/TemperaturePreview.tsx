@@ -19,8 +19,8 @@ export default function TemperaturePreview(props: Props) {
       data.push(
         {
           location: location,
-          date: subtractMinutesFromDate(now, n),
-          value: ((Math.random() * 10) + 19).toFixed(1)
+          time: subtractMinutesFromDate(now, n),
+          value: parseInt(((Math.random() * 10) + 19).toFixed(1))
         }
       )
     }
@@ -46,7 +46,7 @@ export default function TemperaturePreview(props: Props) {
           {latest.value}°C
         </p>
         <p className="temperaturePreviewDate">
-          {getTimeStringFromDate(latest.date)}
+          {getTimeStringFromDate(latest.time)}
         </p>
       </Col>
       <Col span={19}>
@@ -70,10 +70,10 @@ export default function TemperaturePreview(props: Props) {
               fill="url(#fillColor)"
               animationDuration={5000} />
             <XAxis
-              dataKey="date"
+              dataKey="time"
               axisLine={false}
               tickLine={false}
-              tickFormatter={(date) => getTimeStringFromDate(date)} />
+              tickFormatter={(time) => getTimeStringFromDate(time)} />
             <YAxis
               type="number"
               domain={[0, 30]}

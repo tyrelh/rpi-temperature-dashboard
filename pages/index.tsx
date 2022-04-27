@@ -7,6 +7,7 @@ import { Temperature } from '../DTOS/Temperature';
 import { getISODateStringFromDate, subtractDaysFromDate } from '../utils/DateUtils';
 import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
 import { Col, Row } from 'antd';
+import { buildQueryParams } from '../utils/UrlUtils';
 
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
@@ -18,76 +19,98 @@ function generateDummyData() {
 }
 
 const Home: NextPage = (props) => {
-  const [temperatureData, setTemperatureData] = useState<Temperature[]>([]);
+  const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
+  const [fullTemperatureData, setFullTemperatureData] = useState<Map<string, Temperature[]>>(new Map<string, Temperature[]>())
   const [dataFetched, setDataFetched] = useState<boolean>(false);
+
+
+  async function fetchLocations(date: Date): Promise<string[]> {
+    let locations: string[] = []
+      try {
+        const params = new Map<string, string>()
+          .set("date", getISODateStringFromDate(date));
+        const locationsResponse = await fetch(API_BASE_URL + LOCATIONS_ENDPOINT + buildQueryParams(params));
+        const locationsResponseBody = await locationsResponse.json()
+        // console.log("Locations response body: ", locationsResponseBody);
+        locations = locations.concat(locationsResponseBody.locations);
+      } catch (e) {
+        console.error("No locations were found: ", e);
+      }
+      // console.log(locations);
+      return locations;
+  }
+
+
+  async function fetchLatestTemperatures(date: Date, locations: string[]): Promise<void> {
+    const data: Temperature[] = [...latestTemperatureData];
+    for (let location of locations) {
+      const params = new Map<string, string>()
+        .set("location", location)
+        .set("date", getISODateStringFromDate(date));
+      const url = API_BASE_URL + TEMPERATURE_ENDPOINT + buildQueryParams(params);
+      // console.log(url)
+      const response = await fetch(url)
+      // console.log("Raw response: ", response);
+      const body = await response.json();
+      if (!body) {
+        console.log("No results returned from api")
+        continue;
+      }
+      console.log(body)
+      let existing: Temperature | undefined;
+      if (existing = data.find((t: Temperature) =>  t.location == location )) {
+        // console.log(existing)
+        existing.value = body.value;
+        existing.time = body.time;
+      } else {
+        data.push({
+          location: location,
+          value: body.value,
+          time: new Date(body.time)
+        });
+      }
+    }
+    setLatestTemperatureData(data);
+  }
+
+
+  async function fetchFullTemperatures(startDate: Date, endDate: Date, locations: string[]): Promise<void> {
+    const startDateString = getISODateStringFromDate(startDate);
+    const endDateString = getISODateStringFromDate(endDate);
+    for (let location of locations) {
+      const params = new Map<string, string>()
+        .set("location", location)
+        .set("startDate", startDateString)
+        .set("endDate", endDateString)
+      const url = API_BASE_URL + TEMPERATURES_ENDPOINT + buildQueryParams(params);
+      const response = await fetch(url);
+      const body = await response.json();
+      console.log("fetchFullTemperatures response body: ", body);
+      if (!body) {
+        console.log("No results returned from api")
+        continue;
+      }
+      setFullTemperatureData(fullTemperatureData.set(location, body));
+    }
+
+    console.log("fullTemperatureData:", fullTemperatureData);
+
+  }
+
 
   useEffect(() => {
     async function getData() {
+      setDataFetched(true)
       const now = new Date();
-      let locations: string[] = []
-      try {
-        const params = {
-          date: getISODateStringFromDate(now)
-        };
-        const esc = encodeURIComponent;
-        const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-        // console.log("Locations query: ", query);
-        const locationsResponse = await fetch(API_BASE_URL + LOCATIONS_ENDPOINT + "?" + query);
-        const locationsResponseBody = await locationsResponse.json()
-        console.log("Locations response body: ", locationsResponseBody);
-        locations = locations.concat(locationsResponseBody.locations);
-      } catch (e) {
-        console.log("No locations were found");
-      }
-      
-      console.log(locations);
+      const locations = await fetchLocations(now);
       if (locations.length > 0) {
-        
-        const data: Temperature[] = [...temperatureData];
-        
-        for (let location of locations) {
-          const params = {
-            location: location,
-            date: getISODateStringFromDate(now)
-          };
-          // console.log("Request params: ", params);
-          const esc = encodeURIComponent;
-          const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-          const url = API_BASE_URL + TEMPERATURE_ENDPOINT + "?" + query;
-          // console.log(url)
-          const response = await fetch(url)
-          // console.log("Raw response: ", response);
-          const body = await response.json();
-          if (!body) {
-            console.log("No results returned from api")
-            continue;
-          }
-          // console.log(body)
-
-          let existing: Temperature | undefined;
-          if (existing = data.find((t: Temperature) =>  t.location == location )) {
-            // console.log(existing)
-            existing.value = body.value;
-            existing.date = body.time;
-          } else {
-            data.push({
-              location: location,
-              value: body.value,
-              date: new Date(body.time)
-            });
-          }
-        }
-        // console.log(data)
-      
-        setDataFetched(true);
-        setTemperatureData(data);
+        await fetchLatestTemperatures(now, locations);
+        await fetchFullTemperatures(subtractDaysFromDate(now, 1), now, locations)
       }
     }
-
     if (!dataFetched) {
       getData();
     }
-    
   }, []);
 
 
@@ -127,12 +150,12 @@ const Home: NextPage = (props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {
-        temperatureData.length == 0 &&
+        latestTemperatureData.length == 0 &&
         "No data for today yet..."
       }
       {
-        temperatureData.length != 0 &&
-        renderTemperatureGrid(temperatureData)
+        latestTemperatureData.length != 0 &&
+        renderTemperatureGrid(latestTemperatureData)
       }
     </>
   )

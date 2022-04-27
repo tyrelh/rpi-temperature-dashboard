@@ -1,3 +1,4 @@
+import { Temperature } from "../DTOS/Temperature";
 
 export const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
@@ -22,8 +23,10 @@ export function subtractDaysFromDate(date: Date, days: number): Date {
   if (days == 0) {
     return date;
   }
-  date.setDate(date.getDate() - 1);
-  return subtractDaysFromDate(date, --days);
+  const dateCopy: Date = new Date(date);
+  dateCopy.setDate(date.getDate() - 1)
+  // console.log("Date subtracted to: ", dateCopy);
+  return subtractDaysFromDate(dateCopy, --days);
 }
 
 export function subtractMinutesFromDate(date: Date, minutes: number): Date {
@@ -32,4 +35,18 @@ export function subtractMinutesFromDate(date: Date, minutes: number): Date {
   }
   date.setMinutes(date.getMinutes() -1);
   return subtractMinutesFromDate(date, --minutes);
+}
+
+
+export function sortListByTimes(ascending: boolean = false): (a: Temperature, b: Temperature) => number {
+  return (a: Temperature, b: Temperature) => {
+    switch(true) {
+      case a.time < b.time:
+        return 1;
+      case a.time > b.time:
+        return -1;
+      default:
+        return 0;
+    };
+  };
 }

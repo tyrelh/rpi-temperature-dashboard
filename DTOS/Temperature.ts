@@ -1,6 +1,6 @@
 
 export interface Temperature {
   value: number;
-  date: Date;
+  time: Date;
   location?: string;
 }
