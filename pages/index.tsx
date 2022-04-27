@@ -165,7 +165,7 @@ const Home: NextPage = (props) => {
         fullTemperatureData.size != 0 && dataFetched &&
         renderTemperatureGrid(fullTemperatureData)
       }
-      {/* <>
+      <>
        Current break point:{' '}
        {Object.entries(breakpoints)
         .filter(screen => !!screen[1])
@@ -174,7 +174,7 @@ const Home: NextPage = (props) => {
             {screen[0]}
           </Tag>
         ))}
-    </> */}
+    </>
     </>
   )
 }
