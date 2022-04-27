@@ -19,8 +19,8 @@ export default function TemperaturePreview(props: Props) {
 
   return(
     <Row className="temperaturePreviewContainer">
-      <Col span={5}>
-        <h2 className="temperaturePreviewLocation">
+      <Col xl={5} lg={6} md={8} sm={10} xs={22}>
+        <h2 className="temperaturePreviewLocation highlightGradient">
           {latest?.location ? formatLocationName(latest.location) : "-"}
         </h2>
         <p className="temperaturePreviewValue">
@@ -30,8 +30,8 @@ export default function TemperaturePreview(props: Props) {
           {getTimeStringFromDate(new Date(latest.time))}
         </p>
       </Col>
-      <Col span={19}>
-        <ResponsiveContainer width="100%" height={170}>
+      <Col xl={18} lg={17} md={16} sm={14} xs={24}>
+        <ResponsiveContainer width="100%" height={160}>
           <AreaChart data={temperaturesInAscendingOrder}>
             <defs>
               <linearGradient id="fillColor" x1="0" y1="0" x2="0" y2="1">
@@ -51,18 +51,21 @@ export default function TemperaturePreview(props: Props) {
               fill="url(#fillColor)"
               animationDuration={4000} />
             <XAxis
+              tick={{ fill: "#7e8289" }}
               dataKey="time"
               axisLine={false}
               tickLine={false}
               tickFormatter={(time) => getTimeStringFromDate(new Date(time))} />
+              
             <YAxis
+              tick={{ fill: "#7e8289" }}
               type="number"
               domain={[0, 30]}
               axisLine={false}
               tickLine={false}
               tickCount={10}
               tickFormatter={(number) => `${number.toFixed(0)}°C`} />
-            <Tooltip/>
+            {/* <Tooltip/> */}
             <CartesianGrid opacity={0.1} vertical={false}/>
           </AreaChart>
         </ResponsiveContainer>

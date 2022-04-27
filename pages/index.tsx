@@ -6,8 +6,9 @@ import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
 import { getISODateStringFromDate, sortListByTimes, subtractDaysFromDate } from '../utils/DateUtils';
 import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
-import { Col, Row } from 'antd';
+import { Col, Row, Grid, Tag } from 'antd';
 import { buildQueryParams } from '../utils/UrlUtils';
+const { useBreakpoint } = Grid;
 
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
@@ -18,6 +19,7 @@ const Home: NextPage = (props) => {
   const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
   const [fullTemperatureData, setFullTemperatureData] = useState<Map<string, Temperature[]>>(new Map<string, Temperature[]>())
   const [dataFetched, setDataFetched] = useState<boolean>(false);
+  const breakpoints = useBreakpoint();
 
 
   async function fetchLocations(date: Date): Promise<string[]> {
@@ -163,6 +165,16 @@ const Home: NextPage = (props) => {
         fullTemperatureData.size != 0 && dataFetched &&
         renderTemperatureGrid(fullTemperatureData)
       }
+      {/* <>
+       Current break point:{' '}
+       {Object.entries(breakpoints)
+        .filter(screen => !!screen[1])
+        .map(screen => (
+          <Tag color="blue" key={screen[0]}>
+            {screen[0]}
+          </Tag>
+        ))}
+    </> */}
     </>
   )
 }
