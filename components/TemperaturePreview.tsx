@@ -1,40 +1,21 @@
 import { Col, Row } from "antd";
 import { Temperature } from "../DTOS/Temperature";
-import { getTimeStringFromDate, subtractMinutesFromDate } from "../utils/DateUtils";
+import { getTimeStringFromDate, sortListByTimes, subtractMinutesFromDate } from "../utils/DateUtils";
 import { formatLocationName } from "../utils/TextUtils";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 
 export interface Props {
-  latestTemperature: Temperature
-  historicalTemperatures?: Temperature[];
+  data: Temperature[];
 }
 
 export default function TemperaturePreview(props: Props) {
+  const temperaturesInAscendingOrder = props.data.sort(sortListByTimes(true));
+  const latest: Temperature = temperaturesInAscendingOrder[temperaturesInAscendingOrder.length - 1];
+  console.log("latest: ", latest);
 
-  function createDummyHistoricalData(location: string | undefined): Temperature[] {
-    let data: Temperature[] = [];
-    let now = new Date();
-    let n = 20;
-    for (;n >=0; n--) {
-      data.push(
-        {
-          location: location,
-          time: subtractMinutesFromDate(now, n),
-          value: parseInt(((Math.random() * 10) + 19).toFixed(1))
-        }
-      )
-    }
-    return data
+  if (!latest) {
+    return <></>
   }
-
-  const latest = props.latestTemperature;
-  console.log("latest: ", latest)
-  const historical = props?.historicalTemperatures;
-  const now = new Date();
-
-  // if (!latest) {
-  //   return <></>
-  // }
 
   return(
     <Row className="temperaturePreviewContainer">
@@ -43,15 +24,15 @@ export default function TemperaturePreview(props: Props) {
           {latest?.location ? formatLocationName(latest.location) : "-"}
         </h2>
         <p className="temperaturePreviewValue">
-          {latest.value}°C
+          {latest.value.toFixed(0)}°C
         </p>
         <p className="temperaturePreviewDate">
-          {getTimeStringFromDate(latest.time)}
+          {getTimeStringFromDate(new Date(latest.time))}
         </p>
       </Col>
       <Col span={19}>
         <ResponsiveContainer width="100%" height={170}>
-          <AreaChart data={createDummyHistoricalData(latest.location)}>
+          <AreaChart data={temperaturesInAscendingOrder}>
             <defs>
               <linearGradient id="fillColor" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#2fe1b9" stopOpacity={0.2}/>
@@ -68,12 +49,12 @@ export default function TemperaturePreview(props: Props) {
               stroke="url(#strokeColor)"
               strokeWidth="2"
               fill="url(#fillColor)"
-              animationDuration={5000} />
+              animationDuration={4000} />
             <XAxis
               dataKey="time"
               axisLine={false}
               tickLine={false}
-              tickFormatter={(time) => getTimeStringFromDate(time)} />
+              tickFormatter={(time) => getTimeStringFromDate(new Date(time))} />
             <YAxis
               type="number"
               domain={[0, 30]}

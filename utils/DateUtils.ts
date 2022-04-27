@@ -41,9 +41,9 @@ export function subtractMinutesFromDate(date: Date, minutes: number): Date {
 export function sortListByTimes(ascending: boolean = false): (a: Temperature, b: Temperature) => number {
   return (a: Temperature, b: Temperature) => {
     switch(true) {
-      case a.time < b.time:
+      case ascending ? a.time > b.time : a.time < b.time:
         return 1;
-      case a.time > b.time:
+      case ascending ? a.time < b.time : a.time > b.time:
         return -1;
       default:
         return 0;

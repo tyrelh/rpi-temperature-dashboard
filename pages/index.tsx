@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { URLSearchParams } from 'url';
 import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
-import { getISODateStringFromDate, subtractDaysFromDate } from '../utils/DateUtils';
+import { getISODateStringFromDate, sortListByTimes, subtractDaysFromDate } from '../utils/DateUtils';
 import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
 import { Col, Row } from 'antd';
 import { buildQueryParams } from '../utils/UrlUtils';
@@ -13,10 +13,6 @@ const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
 const LOCATIONS_ENDPOINT = "/locations";
 const NUMBER_OF_COLUMNS = 2;
-
-function generateDummyData() {
-  return ["sun-room", "office"];
-}
 
 const Home: NextPage = (props) => {
   const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
@@ -77,6 +73,7 @@ const Home: NextPage = (props) => {
   async function fetchFullTemperatures(startDate: Date, endDate: Date, locations: string[]): Promise<void> {
     const startDateString = getISODateStringFromDate(startDate);
     const endDateString = getISODateStringFromDate(endDate);
+    const locationMap = new Map<string, Temperature[]>();
     for (let location of locations) {
       const params = new Map<string, string>()
         .set("location", location)
@@ -85,16 +82,16 @@ const Home: NextPage = (props) => {
       const url = API_BASE_URL + TEMPERATURES_ENDPOINT + buildQueryParams(params);
       const response = await fetch(url);
       const body = await response.json();
-      console.log("fetchFullTemperatures response body: ", body);
+      // console.log("fetchFullTemperatures response body: ", body);
       if (!body) {
         console.log("No results returned from api")
         continue;
       }
-      setFullTemperatureData(fullTemperatureData.set(location, body));
+      const sortedTemperaturesByDate: Temperature[] = body.sort(sortListByTimes())
+      // console.log("Sorted data: ", sortedTemperaturesByDate);
+      locationMap.set(location, body)
     }
-
-    console.log("fullTemperatureData:", fullTemperatureData);
-
+    setFullTemperatureData(locationMap);
   }
 
 
@@ -114,26 +111,34 @@ const Home: NextPage = (props) => {
   }, []);
 
 
-  function mapPreviewColumns(list: Array<Temperature>): ReactElement {
+  function mapPreviewColumns(keys: string[], data: Map<string, Temperature[]>): ReactElement {
+    // console.log("keys", keys);
+    // console.log("data", data)
+    // console.log(`mapPreviewColumns: keys ${keys} data: ${data}`)
     let elements: ReactElement[] = [];
-    list.map((value, index) => {
-      elements.push(
-        <Col span={12}>
-          <TemperaturePreview latestTemperature={value}/>
-        </Col>
-      );
-    })
+    for (let key of keys) {
+      const temperature: Temperature[] | undefined = data.get(key)
+      // console.log("temperature", temperature);
+      if (temperature) {
+        elements.push(
+          <Col span={12} key={key}>
+            <TemperaturePreview data={temperature}/>
+          </Col>
+        )
+      }
+    }
     return <>{ elements }</>
   }
 
 
-  function renderTemperatureGrid(data: Array<any>) {
+  function renderTemperatureGrid(data: Map<string, Temperature[]>) {
     let elements: ReactElement[] = []
     let n = 0;
-    while(n < data.length) {
+    const locations = [...data.keys()]
+    while(n < locations.length) {
       elements.push(
-        <Row>
-          { mapPreviewColumns(data.slice(n, n + NUMBER_OF_COLUMNS)) }
+        <Row key={n}>
+          { mapPreviewColumns(locations.slice(n, n + NUMBER_OF_COLUMNS), data) }
         </Row>
       )
       n += NUMBER_OF_COLUMNS;
@@ -142,6 +147,7 @@ const Home: NextPage = (props) => {
   }
 
 
+  // console.log(fullTemperatureData.size)
   return (
     <>
       <Head>
@@ -150,45 +156,15 @@ const Home: NextPage = (props) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {
-        latestTemperatureData.length == 0 &&
+        fullTemperatureData.size == 0 &&
         "No data for today yet..."
       }
       {
-        latestTemperatureData.length != 0 &&
-        renderTemperatureGrid(latestTemperatureData)
+        fullTemperatureData.size != 0 && dataFetched &&
+        renderTemperatureGrid(fullTemperatureData)
       }
     </>
   )
 }
 
 export default Home
-
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const date = new Date();
-
-//   var params = {
-//     location: 'office',
-//     date: date.getTime().toString()
-//   };
-
-//   // console.log("Request params: ", params);
-//   const esc = encodeURIComponent;
-//   const query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&');
-//   const url = API_URL + TEMPERATURE_ENDPOINT + "?" + query;
-//   // console.log(url)
-//   const response = await fetch(url)
-//   // console.log("Raw response: ", response);
-//   const body = await response.json();
-//   if (!body) {
-//     console.log("No results returned from api")
-//     return {
-//       props: {}
-//     }
-//   }
-//   console.log(body)
-
-//   return {
-//     props: body
-//   }
-// }
