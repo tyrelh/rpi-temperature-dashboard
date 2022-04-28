@@ -165,16 +165,16 @@ const Home: NextPage = (props) => {
         fullTemperatureData.size != 0 && dataFetched &&
         renderTemperatureGrid(fullTemperatureData)
       }
-      <>
-       Current break point:{' '}
-       {Object.entries(breakpoints)
-        .filter(screen => !!screen[1])
-        .map(screen => (
-          <Tag color="blue" key={screen[0]}>
-            {screen[0]}
-          </Tag>
-        ))}
-    </>
+      <p>
+        Current break point:{' '}
+        {Object.entries(breakpoints)
+          .filter(screen => !!screen[1])
+          .map(screen => (
+            <Tag key={screen[0]}>
+              {screen[0]}
+            </Tag>
+          ))}
+      </p>
     </>
   )
 }

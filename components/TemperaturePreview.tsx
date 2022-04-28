@@ -24,7 +24,7 @@ export default function TemperaturePreview(props: Props) {
           {latest?.location ? formatLocationName(latest.location) : "-"}
         </h2>
         <p className="temperaturePreviewValue">
-          {latest.value.toFixed(0)}°C
+          {latest.value.toFixed(0)}<span className="temperatureUnit">°C</span>
         </p>
         <p className="temperaturePreviewDate">
           {getTimeStringFromDate(new Date(latest.time))}

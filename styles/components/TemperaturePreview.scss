@@ -34,6 +34,10 @@
     font-weight: 700;
     margin: 0 0 0.2rem 0;
     text-align: right;
+    .temperatureUnit {
+      font-size: 1.5rem;
+      vertical-align: text-top;
+    }
   }
 
   .temperaturePreviewDate {
