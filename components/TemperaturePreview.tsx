@@ -60,10 +60,10 @@ export default function TemperaturePreview(props: Props) {
             <YAxis
               tick={{ fill: "#7e8289" }}
               type="number"
-              domain={[0, 30]}
+              domain={[0, 40]}
               axisLine={false}
               tickLine={false}
-              tickCount={10}
+              tickCount={16}
               tickFormatter={(number) => `${number.toFixed(0)}°C`} />
             {/* <Tooltip/> */}
             <CartesianGrid opacity={0.1} vertical={false}/>
