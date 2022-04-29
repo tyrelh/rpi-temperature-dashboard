@@ -2,9 +2,3 @@ body {
   font-family: $font-main;
 }
 
-.highlightGradient {
-  background: -webkit-linear-gradient($color-accent-1, rgba($color-accent-1, 80%));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 2px 10px rgba($color-accent-1, 10%)
-}

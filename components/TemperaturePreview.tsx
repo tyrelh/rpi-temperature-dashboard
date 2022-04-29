@@ -3,6 +3,7 @@ import { Temperature } from "../DTOS/Temperature";
 import { getTimeStringFromDate, sortListByTimes, subtractMinutesFromDate } from "../utils/DateUtils";
 import { formatLocationName } from "../utils/TextUtils";
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
+import { findMinMaxTemperatures } from "../utils/TemperatureUtils";
 
 export interface Props {
   data: Temperature[];
@@ -10,21 +11,27 @@ export interface Props {
 
 export default function TemperaturePreview(props: Props) {
   const temperaturesInAscendingOrder = props.data.sort(sortListByTimes(true));
+  const {min, max} = findMinMaxTemperatures(props.data)
   const latest: Temperature = temperaturesInAscendingOrder[temperaturesInAscendingOrder.length - 1];
   console.log("latest: ", latest);
+  const latestValueIntegerPortion = latest.value.toFixed(1).toString().split(".")[0];
+  const latestValueDecimalPortion = latest.value.toFixed(1).toString().split(".")[1];
 
   if (!latest) {
     return <></>
   }
 
   return(
-    <Row className="temperaturePreviewContainer">
-      <Col xl={5} lg={6} md={8} sm={10} xs={22}>
-        <h2 className="temperaturePreviewLocation highlightGradient">
+    <>
+    <Row>
+      <h2 className="temperatureLocation highlightGradient">
           {latest?.location ? formatLocationName(latest.location) : "-"}
         </h2>
+    </Row>
+    <Row className="temperaturePreviewContainer">
+      <Col xl={5} lg={6} md={8} sm={10} xs={22}>
         <p className="temperaturePreviewValue">
-          {latest.value.toFixed(0)}<span className="temperatureUnit">°C</span>
+          {latestValueIntegerPortion}<span className="temperatureUnit">.{latestValueDecimalPortion}°</span>
         </p>
         <p className="temperaturePreviewDate">
           {getTimeStringFromDate(new Date(latest.time))}
@@ -60,16 +67,17 @@ export default function TemperaturePreview(props: Props) {
             <YAxis
               tick={{ fill: "#7e8289" }}
               type="number"
-              domain={[0, 40]}
+              domain={[min ? min.value : 0, max ? max.value : 40]}
               axisLine={false}
               tickLine={false}
               tickCount={16}
-              tickFormatter={(number) => `${number.toFixed(0)}°C`} />
+              tickFormatter={(number) => `${number.toFixed(0)}°`} />
             {/* <Tooltip/> */}
             <CartesianGrid opacity={0.1} vertical={false}/>
           </AreaChart>
         </ResponsiveContainer>
       </Col>
     </Row>
+    </>
   )
 }
