@@ -13,7 +13,7 @@ export interface Props {
 
 export default function TemperaturePreview(props: Props) {
   const temperaturesInAscendingOrder = props.data.sort(sortListByTimes(true));
-  // const {min, max} = findMinMaxTemperatures(props.data)
+  const {min, max} = findMinMaxTemperatures(props.data)
   const latest: Temperature = temperaturesInAscendingOrder[temperaturesInAscendingOrder.length - 1];
   // console.log("latest: ", latest);
   const latestValueIntegerPortion = latest.value.toFixed(1).toString().split(".")[0];
@@ -35,6 +35,12 @@ export default function TemperaturePreview(props: Props) {
         <p className="temperaturePreviewValue">
           {latestValueIntegerPortion}<span className="temperatureUnit">.{latestValueDecimalPortion}°</span>
         </p>
+        {
+          min && max &&
+          <p className="temperatureMinMax">
+            {`${min.value}° - ${max.value}°`}
+          </p>
+        }
         <p className="temperaturePreviewDate">
           {getTimeStringFromDate(new Date(latest.time))}
         </p>
@@ -45,16 +51,12 @@ export default function TemperaturePreview(props: Props) {
             <defs>
               <linearGradient id="fillColor" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#2fe1b9" stopOpacity={0.25}/>
-                <stop offset="99%" stopColor="#2fe1b9" stopOpacity={0.0}/>
-              </linearGradient>
-              <linearGradient id="strokeColor" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2fe1b9" stopOpacity={1}/>
-                <stop offset="100%" stopColor="#2fe1b9" stopOpacity={0.7}/>
+                <stop offset="90%" stopColor="#2fe1b9" stopOpacity={0.0}/>
               </linearGradient>
             </defs>
             <Area
               dataKey="value"
-              stroke="url(#strokeColor)"
+              stroke="#2fe1b9"
               strokeWidth="2"
               fill="url(#fillColor)"
               animationDuration={4000} />
