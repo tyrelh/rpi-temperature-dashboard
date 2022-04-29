@@ -89,7 +89,7 @@ const Home: NextPage = (props) => {
         console.log("No results returned from api")
         continue;
       }
-      const sortedTemperaturesByDate: Temperature[] = body.sort(sortListByTimes())
+      // const sortedTemperaturesByDate: Temperature[] = body.sort(sortListByTimes())
       // console.log("Sorted data: ", sortedTemperaturesByDate);
       locationMap.set(location, body)
     }
@@ -103,7 +103,7 @@ const Home: NextPage = (props) => {
       const now = new Date();
       const locations = await fetchLocations(now);
       if (locations.length > 0) {
-        await fetchLatestTemperatures(now, locations);
+        // await fetchLatestTemperatures(now, locations);
         await fetchFullTemperatures(subtractDaysFromDate(now, 1), now, locations)
       }
     }
@@ -166,7 +166,7 @@ const Home: NextPage = (props) => {
         fullTemperatureData.size != 0 && dataFetched &&
         renderTemperatureGrid(fullTemperatureData)
       }
-      <p>
+      {/* <p>
         Current break point:{' '}
         {Object.entries(breakpoints)
           .filter(screen => !!screen[1])
@@ -175,7 +175,7 @@ const Home: NextPage = (props) => {
               {screen[0]}
             </Tag>
           ))}
-      </p>
+      </p> */}
     </>
   )
 }
