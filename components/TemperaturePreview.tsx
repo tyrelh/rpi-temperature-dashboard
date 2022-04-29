@@ -7,13 +7,15 @@ import { findMinMaxTemperatures } from "../utils/TemperatureUtils";
 
 export interface Props {
   data: Temperature[];
+  rangeMin?: number;
+  rangeMax?: number;
 }
 
 export default function TemperaturePreview(props: Props) {
   const temperaturesInAscendingOrder = props.data.sort(sortListByTimes(true));
-  const {min, max} = findMinMaxTemperatures(props.data)
+  // const {min, max} = findMinMaxTemperatures(props.data)
   const latest: Temperature = temperaturesInAscendingOrder[temperaturesInAscendingOrder.length - 1];
-  console.log("latest: ", latest);
+  // console.log("latest: ", latest);
   const latestValueIntegerPortion = latest.value.toFixed(1).toString().split(".")[0];
   const latestValueDecimalPortion = latest.value.toFixed(1).toString().split(".")[1];
 
@@ -42,8 +44,8 @@ export default function TemperaturePreview(props: Props) {
           <AreaChart data={temperaturesInAscendingOrder}>
             <defs>
               <linearGradient id="fillColor" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#2fe1b9" stopOpacity={0.2}/>
-                <stop offset="50%" stopColor="#2fe1b9" stopOpacity={0.02}/>
+                <stop offset="0%" stopColor="#2fe1b9" stopOpacity={0.25}/>
+                <stop offset="99%" stopColor="#2fe1b9" stopOpacity={0.0}/>
               </linearGradient>
               <linearGradient id="strokeColor" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#2fe1b9" stopOpacity={1}/>
@@ -51,7 +53,6 @@ export default function TemperaturePreview(props: Props) {
               </linearGradient>
             </defs>
             <Area
-              type="monotone"
               dataKey="value"
               stroke="url(#strokeColor)"
               strokeWidth="2"
@@ -67,13 +68,13 @@ export default function TemperaturePreview(props: Props) {
             <YAxis
               tick={{ fill: "#7e8289" }}
               type="number"
-              domain={[min ? min.value : 0, max ? max.value : 40]}
+              domain={[props?.rangeMin ? props.rangeMin : 0, props?.rangeMax ? props.rangeMax : 40]}
               axisLine={false}
               tickLine={false}
-              tickCount={16}
+              tickCount={7}
               tickFormatter={(number) => `${number.toFixed(0)}°`} />
             {/* <Tooltip/> */}
-            <CartesianGrid opacity={0.1} vertical={false}/>
+            {/* <CartesianGrid opacity={0.1} vertical={false}/> */}
           </AreaChart>
         </ResponsiveContainer>
       </Col>

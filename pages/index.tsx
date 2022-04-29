@@ -1,14 +1,13 @@
 import React, {ReactElement, useEffect, useState} from 'react';
-import type { GetServerSideProps, NextPage } from 'next';
+import type { NextPage } from 'next';
 import Head from 'next/head';
-import { URLSearchParams } from 'url';
 import TemperaturePreview from '../components/TemperaturePreview';
 import { Temperature } from '../DTOS/Temperature';
 import { getISODateStringFromDate, sortListByTimes, subtractDaysFromDate } from '../utils/DateUtils';
 import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
 import { Col, Row, Grid, Tag } from 'antd';
 import { buildQueryParams } from '../utils/UrlUtils';
-const { useBreakpoint } = Grid;
+// const { useBreakpoint } = Grid;
 
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
@@ -16,10 +15,13 @@ const LOCATIONS_ENDPOINT = "/locations";
 const NUMBER_OF_COLUMNS = 2;
 
 const Home: NextPage = (props) => {
-  const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
+  // const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
   const [fullTemperatureData, setFullTemperatureData] = useState<Map<string, Temperature[]>>(new Map<string, Temperature[]>())
   const [dataFetched, setDataFetched] = useState<boolean>(false);
-  const breakpoints = useBreakpoint();
+  // const breakpoints = useBreakpoint();
+
+  let minTemperature = 999.9;
+  let maxTemperature = -999.9;
 
 
   async function fetchLocations(date: Date): Promise<string[]> {
@@ -39,37 +41,37 @@ const Home: NextPage = (props) => {
   }
 
 
-  async function fetchLatestTemperatures(date: Date, locations: string[]): Promise<void> {
-    const data: Temperature[] = [...latestTemperatureData];
-    for (let location of locations) {
-      const params = new Map<string, string>()
-        .set("location", location)
-        .set("date", getISODateStringFromDate(date));
-      const url = API_BASE_URL + TEMPERATURE_ENDPOINT + buildQueryParams(params);
-      // console.log(url)
-      const response = await fetch(url)
-      // console.log("Raw response: ", response);
-      const body = await response.json();
-      if (!body) {
-        console.log("No results returned from api")
-        continue;
-      }
-      console.log(body)
-      let existing: Temperature | undefined;
-      if (existing = data.find((t: Temperature) =>  t.location == location )) {
-        // console.log(existing)
-        existing.value = body.value;
-        existing.time = body.time;
-      } else {
-        data.push({
-          location: location,
-          value: body.value,
-          time: new Date(body.time)
-        });
-      }
-    }
-    setLatestTemperatureData(data);
-  }
+  // async function fetchLatestTemperatures(date: Date, locations: string[]): Promise<void> {
+  //   const data: Temperature[] = [...latestTemperatureData];
+  //   for (let location of locations) {
+  //     const params = new Map<string, string>()
+  //       .set("location", location)
+  //       .set("date", getISODateStringFromDate(date));
+  //     const url = API_BASE_URL + TEMPERATURE_ENDPOINT + buildQueryParams(params);
+  //     // console.log(url)
+  //     const response = await fetch(url)
+  //     // console.log("Raw response: ", response);
+  //     const body = await response.json();
+  //     if (!body) {
+  //       console.log("No results returned from api")
+  //       continue;
+  //     }
+  //     console.log(body)
+  //     let existing: Temperature | undefined;
+  //     if (existing = data.find((t: Temperature) =>  t.location == location )) {
+  //       // console.log(existing)
+  //       existing.value = body.value;
+  //       existing.time = body.time;
+  //     } else {
+  //       data.push({
+  //         location: location,
+  //         value: body.value,
+  //         time: new Date(body.time)
+  //       });
+  //     }
+  //   }
+  //   setLatestTemperatureData(data);
+  // }
 
 
   async function fetchFullTemperatures(startDate: Date, endDate: Date, locations: string[]): Promise<void> {
@@ -124,7 +126,7 @@ const Home: NextPage = (props) => {
       if (temperature) {
         elements.push(
           <Col span={12} key={key}>
-            <TemperaturePreview data={temperature}/>
+            <TemperaturePreview data={temperature} rangeMax={maxTemperature} rangeMin={minTemperature}/>
           </Col>
         )
       }
@@ -147,6 +149,17 @@ const Home: NextPage = (props) => {
     }
     return <>{ elements }</>
   }
+
+  for (let temperatureList of fullTemperatureData.values()) {
+    for (let temperature of temperatureList) {
+      if (temperature.value < minTemperature) {
+        minTemperature = temperature.value;
+      } else if (temperature.value > maxTemperature) {
+        maxTemperature = temperature.value;
+      }
+    }
+  }
+  console.log(`min: ${minTemperature}, max: ${maxTemperature}`);
 
 
   // console.log(fullTemperatureData.size)
