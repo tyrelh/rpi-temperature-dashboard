@@ -59,7 +59,7 @@ export default function TemperaturePreview(props: Props) {
               stroke="#2fe1b9"
               strokeWidth="2"
               fill="url(#fillColor)"
-              animationDuration={4000} />
+              animationDuration={2000} />
             <XAxis
               tick={{ fill: "#7e8289" }}
               dataKey="time"
