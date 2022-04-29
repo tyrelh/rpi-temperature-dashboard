@@ -10,7 +10,25 @@ export function getISODateStringFromDate(date: Date): string {
 }
 
 export function getTimeStringFromDate(date: Date): string {
-  return date.toLocaleTimeString("us-EN").toLowerCase()
+  return `${get12HourFrom24(date.getHours())}:${format2DigitMinutes(date.getMinutes())} ${getAmPmFrom24(date.getHours())}`
+  // return date.toLocaleTimeString("us-EN").toLowerCase()
+}
+
+function get12HourFrom24(n: number): number {
+  const hours = n % 12;
+  return (n === 12 ? 12 : hours);
+}
+
+function getAmPmFrom24(n: number): string {
+  if (n >= 12) {
+    return "pm";
+  }
+  return "am";
+}
+
+function format2DigitMinutes(minutes: number): string {
+  const minString = minutes.toString();
+  return (minString.length == 1 ? `0${minString}` : minString)
 }
 
 export function dateDiffInDays(a: Date, b: Date): number {
