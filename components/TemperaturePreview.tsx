@@ -22,6 +22,7 @@ export default function TemperaturePreview(props: Props) {
   if (!latest) {
     return <></>
   }
+  // console.log(variables)
 
   return(
     <>

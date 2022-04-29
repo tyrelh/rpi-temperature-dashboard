@@ -1,5 +1,11 @@
 $color-accent-1: #2fe1b9;
-// $color-background: darken(#12192e, 100%);
-$color-background: #00020a;
-$color-main-text: rgba(#fff, 90%);
-$color-faded-text: #7e8289;
+$color-background: darken(#12192e, 0%);
+// $color-background: #12192e;
+$color-main-text: rgba(#fff, 99%);
+$color-faded-text: rgba(#fff, 45%);
+
+:export {
+  colorAccent: $color-accent-1;
+  colorMain: $color-main-text;
+  colorFaded: $color-faded-text;
+}
