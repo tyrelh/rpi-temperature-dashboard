@@ -1,16 +1,16 @@
 
 .temperatureLocation {
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 500;
   color: $color-accent-1;
   font-family: $font-alliance-medium;
   margin: 12px;
   letter-spacing: -0.06rem;
-  line-height: 2.7rem;
+  line-height: 3rem;
 }
 
 .temperaturePreviewContainer {
-  padding: 0px 12px 12px 0;
+  padding: 0 12px 0 0;
 
   .temperaturePreviewValue {
     position: relative;
