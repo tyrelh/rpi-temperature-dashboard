@@ -7,6 +7,9 @@ import { getISODateStringFromDate, sortListByTimes, subtractDaysFromDate } from 
 import { TEMPERATURE_API_URL as API_BASE_URL } from '../config';
 import { Col, Row, Grid, Tag } from 'antd';
 import { buildQueryParams } from '../utils/UrlUtils';
+import {
+  LoadingOutlined,
+} from '@ant-design/icons';
 // const { useBreakpoint } = Grid;
 
 const TEMPERATURE_ENDPOINT = "/temperature";
@@ -159,7 +162,7 @@ const Home: NextPage = (props) => {
       }
     }
   }
-  console.log(`min: ${minTemperature}, max: ${maxTemperature}`);
+  // console.log(`min: ${minTemperature}, max: ${maxTemperature}`);
 
 
   // console.log(fullTemperatureData.size)
@@ -173,7 +176,11 @@ const Home: NextPage = (props) => {
       </Head>
       {
         fullTemperatureData.size == 0 &&
-        "No data for today yet..."
+        <div className="loadingContainer">
+          <div className="loading">
+            <LoadingOutlined />
+          </div>
+        </div>
       }
       {
         fullTemperatureData.size != 0 && dataFetched &&
