@@ -10,18 +10,18 @@ import { buildQueryParams } from '../utils/UrlUtils';
 import {
   LoadingOutlined,
 } from '@ant-design/icons';
-// const { useBreakpoint } = Grid;
+const { useBreakpoint } = Grid;
 
 const TEMPERATURE_ENDPOINT = "/temperature";
 const TEMPERATURES_ENDPOINT = "/temperatures";
 const LOCATIONS_ENDPOINT = "/locations";
-const NUMBER_OF_COLUMNS = 2;
+const NUMBER_OF_COLUMNS = 1;
 
 const Home: NextPage = (props) => {
   // const [latestTemperatureData, setLatestTemperatureData] = useState<Temperature[]>([]);
   const [fullTemperatureData, setFullTemperatureData] = useState<Map<string, Temperature[]>>(new Map<string, Temperature[]>())
   const [dataFetched, setDataFetched] = useState<boolean>(false);
-  // const breakpoints = useBreakpoint();
+  const breakpoints = useBreakpoint();
 
   let minTemperature = 999.9;
   let maxTemperature = -999.9;
@@ -128,7 +128,7 @@ const Home: NextPage = (props) => {
       // console.log("temperature", temperature);
       if (temperature) {
         elements.push(
-          <Col span={12} key={key}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12} key={key}>
             <TemperaturePreview data={temperature} rangeMax={maxTemperature} rangeMin={minTemperature}/>
           </Col>
         )
@@ -139,16 +139,21 @@ const Home: NextPage = (props) => {
 
 
   function renderTemperatureGrid(data: Map<string, Temperature[]>) {
+    let numberOfColumns = 1
+    if (breakpoints.md || breakpoints.lg || breakpoints.xl) {
+      numberOfColumns = 2
+    }
+    
     let elements: ReactElement[] = []
     let n = 0;
     const locations = [...data.keys()]
     while(n < locations.length) {
       elements.push(
         <Row key={n}>
-          { mapPreviewColumns(locations.slice(n, n + NUMBER_OF_COLUMNS), data) }
+          { mapPreviewColumns(locations.slice(n, n + numberOfColumns), data) }
         </Row>
       )
-      n += NUMBER_OF_COLUMNS;
+      n += numberOfColumns;
     }
     return <>{ elements }</>
   }
