@@ -32,7 +32,7 @@ export default function TemperaturePreview(props: Props) {
         </h2>
     </Row>
     <Row className="temperaturePreviewContainer">
-      <Col xl={5} lg={6} md={8} sm={7} xs={7}>
+      <Col xl={5} lg={6} md={8} sm={8} xs={8}>
         <p className="temperaturePreviewValue">
           {latestValueIntegerPortion}<span className="temperatureUnit">.{latestValueDecimalPortion}°</span>
         </p>
@@ -46,7 +46,7 @@ export default function TemperaturePreview(props: Props) {
           {getTimeStringFromDate(new Date(latest.time))}
         </p>
       </Col>
-      <Col xl={18} lg={17} md={16} sm={17} xs={17}>
+      <Col xl={18} lg={17} md={16} sm={16} xs={16}>
         <ResponsiveContainer width="100%" height={129}>
           <AreaChart data={temperaturesInAscendingOrder}>
             <defs>
