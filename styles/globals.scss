@@ -8,6 +8,7 @@
 
 // COMPONENTS
 @import "./components/TemperaturePreview.scss";
+@import "./components/Loading.scss";
 
 html {
   font-size: 1.05rem;
@@ -25,15 +26,4 @@ body {
   border-color: lighten($color-accent-1, 5%);
   border-radius: 6px;
   box-shadow: 0 2px 10px rgba($color-accent-1, 5%)
-}
-
-.loadingContainer {
-  height: 480px;
-  text-align: center;
-
-  .loading {
-    margin-top: 170px;
-    font-size: 5rem;
-    color: $color-accent-1;
-  }
 }
