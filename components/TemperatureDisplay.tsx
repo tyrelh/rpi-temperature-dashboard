@@ -26,7 +26,7 @@ export default function TemperatureDisplay(props: Props) {
   useEffect(() => {
     async function fetchTemperatureData(): Promise<void> {
       const now = new Date();
-      await fetchFullTemperatures(subtractDaysFromDate(now, 1), now, props.location)
+      await fetchFullTemperatures(subtractDaysFromDate(now, 2), now, props.location)
     };
     fetchTemperatureData();
   }, []);
